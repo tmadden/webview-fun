@@ -19,11 +19,16 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
         glfwSetWindowShouldClose(window, GL_TRUE);
 }
 
-static webview::webview *the_webview;
+std::unique_ptr<webview::browser> the_browser;
 
 static void window_size_callback(GLFWwindow *window, int width, int height)
 {
-    the_webview->set_size(width, height, WEBVIEW_HINT_FIXED);
+    the_browser->resize(glfwGetWin32Window(window));
+    // the_browser->eval("location.reload(true);");
+}
+
+static void on_message(const std::string msg)
+{
 }
 
 #ifdef WIN32
@@ -43,7 +48,7 @@ int main()
     if (!glfwInit())
         exit(EXIT_FAILURE);
 
-    window = glfwCreateWindow(640, 480, "Simple example", NULL, NULL);
+    window = glfwCreateWindow(1200, 1600, "Simple example", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
@@ -58,10 +63,14 @@ int main()
     glfwSetWindowSizeCallback(window, window_size_callback);
 
     HWND hwnd = glfwGetWin32Window(window);
-    webview::webview w(true, &hwnd);
-    the_webview = &w;
-    w.navigate("http://127.0.0.1:8000/");
-    // w.run();
+    the_browser = std::make_unique<webview::edge_chromium>();
+    if (!the_browser->embed(hwnd, true, on_message))
+    {
+        the_browser = std::make_unique<webview::edge_html>();
+        the_browser->embed(hwnd, true, on_message);
+    }
+    the_browser->resize(hwnd);
+    the_browser->navigate("http://127.0.0.1:8000/");
 
     while (!glfwWindowShouldClose(window))
     {
