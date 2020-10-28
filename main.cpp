@@ -62,15 +62,15 @@ int main()
 
     glfwSetWindowSizeCallback(window, window_size_callback);
 
-    HWND hwnd = glfwGetWin32Window(window);
-    the_browser = std::make_unique<webview::edge_chromium>();
-    if (!the_browser->embed(hwnd, true, on_message))
-    {
-        the_browser = std::make_unique<webview::edge_html>();
-        the_browser->embed(hwnd, true, on_message);
-    }
-    the_browser->resize(hwnd);
-    the_browser->navigate("http://127.0.0.1:8000/");
+    // HWND hwnd = glfwGetWin32Window(window);
+    // the_browser = std::make_unique<webview::edge_chromium>();
+    // if (!the_browser->embed(hwnd, true, on_message))
+    // {
+    //     the_browser = std::make_unique<webview::edge_html>();
+    //     the_browser->embed(hwnd, true, on_message);
+    // }
+    // the_browser->resize(hwnd);
+    // the_browser->navigate("http://127.0.0.1:5500/build/#/");
 
     while (!glfwWindowShouldClose(window))
     {
